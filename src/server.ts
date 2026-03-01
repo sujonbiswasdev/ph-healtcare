@@ -1,13 +1,5 @@
-import app from "./app";
-
-const bootstrap = () => {
-    try {
-        app.listen(5000, () => {
-            console.log(`Server is running on http://localhost:5000`);
-        });
-    } catch (error) {
-        console.error('Failed to start server:', error);
-    }
-}
-
-bootstrap();
+import app from "./app"
+const port = 5000
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})

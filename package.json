@@ -2,13 +2,12 @@
   "name": "ph-healthcare",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node dist/server.js",
     "build": "tsc",
-    "dev": "tsx watch src/server.ts",
-    "lint": "eslint ./src/**/*"
+    "dev": "tsx watch src/server.ts"
   },
   "keywords": [],
   "author": "",

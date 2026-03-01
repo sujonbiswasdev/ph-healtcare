@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import status from "http-status";
 // import z from "zod";
 import { envVars } from "../config/env";
+import { TErrorSources } from "../interface/error.interface";
+import z from "zod";
 // import AppError from "../errorHelpers/AppError";
 // import { handleZodError } from "../errorHelpers/handleZodError";
 // import { TErrorResponse, TErrorSources } from "../interfaces/error.interface";
@@ -14,7 +16,7 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
         console.log("Error from Global Error Handler", err);
     }
 
-    // let errorSources: TErrorSources[] = []
+    let errorSources: TErrorSources[] = []
     let statusCode: number = status.INTERNAL_SERVER_ERROR;
     let message: string = 'Internal Server Error';
     let stack: string | undefined = undefined;
@@ -38,12 +40,19 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
     ] 
     */
 
-    // if (err instanceof z.ZodError) {
-    //     const simplifiedError = handleZodError(err);
-    //     statusCode = simplifiedError.statusCode as number
-    //     message = simplifiedError.message
-    //     errorSources = [...simplifiedError.errorSources]
-    //     stack = err.stack;
+    if (err instanceof z.ZodError) {
+      statusCode=status.BAD_REQUEST,
+
+      message="Zod validation Error";
+      err.issues.forEach(issue=>{
+        errorSources.push({path:issue.path.join("=>"),message:issue.message})
+      })
+      
+        // const simplifiedError = handleZodError(err);
+        // statusCode = simplifiedError.statusCode as number
+        // message = simplifiedError.message
+        // errorSources = [...simplifiedError.errorSources]
+        stack = err.stack;
 
     // } else if (err instanceof AppError) {
     //     statusCode = err.statusCode;
@@ -78,4 +87,4 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
     // }
 
     res.status(statusCode).json("ddd");
-}
+}}

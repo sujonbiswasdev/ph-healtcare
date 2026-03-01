@@ -683,11 +683,6 @@ export type DoctorSumOrderByAggregateInput = {
   averageRating?: Prisma.SortOrder
 }
 
-export type DoctorScalarRelationFilter = {
-  is?: Prisma.DoctorWhereInput
-  isNot?: Prisma.DoctorWhereInput
-}
-
 export type DoctorCreateNestedOneWithoutUserInput = {
   create?: Prisma.XOR<Prisma.DoctorCreateWithoutUserInput, Prisma.DoctorUncheckedCreateWithoutUserInput>
   connectOrCreate?: Prisma.DoctorCreateOrConnectWithoutUserInput
@@ -746,10 +741,12 @@ export type DoctorCreateNestedOneWithoutSpecialtiesInput = {
   connect?: Prisma.DoctorWhereUniqueInput
 }
 
-export type DoctorUpdateOneRequiredWithoutSpecialtiesNestedInput = {
+export type DoctorUpdateOneWithoutSpecialtiesNestedInput = {
   create?: Prisma.XOR<Prisma.DoctorCreateWithoutSpecialtiesInput, Prisma.DoctorUncheckedCreateWithoutSpecialtiesInput>
   connectOrCreate?: Prisma.DoctorCreateOrConnectWithoutSpecialtiesInput
   upsert?: Prisma.DoctorUpsertWithoutSpecialtiesInput
+  disconnect?: Prisma.DoctorWhereInput | boolean
+  delete?: Prisma.DoctorWhereInput | boolean
   connect?: Prisma.DoctorWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.DoctorUpdateToOneWithWhereWithoutSpecialtiesInput, Prisma.DoctorUpdateWithoutSpecialtiesInput>, Prisma.DoctorUncheckedUpdateWithoutSpecialtiesInput>
 }
