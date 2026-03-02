@@ -23,6 +23,8 @@ interface EnvConfig {
     REFRESH_TOKEN_EXPIRES_IN?: string;
     BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN?: string;
     BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE?: string;
+    GOOGLE_CLIENT_SECRET:string;
+    GOOGLE_CLIENT_ID:string;
 }
 
 
@@ -45,6 +47,8 @@ const loadEnvVariables = (): EnvConfig => {
         'EMAIL_SENDER_SMTP_HOST',
         'EMAIL_SENDER_SMTP_PORT',
         'EMAIL_SENDER_SMTP_FROM',
+        'GOOGLE_CLIENT_ID',
+        'GOOGLE_CLIENT_SECRET'
     ]
 
     requireEnvVariable.forEach((variable) => {
@@ -73,6 +77,8 @@ const loadEnvVariables = (): EnvConfig => {
             SMTP_PORT: process.env.EMAIL_SENDER_SMTP_PORT as string,
             SMTP_FROM: process.env.EMAIL_SENDER_SMTP_FROM as string,
         },
+          GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID as string,
+        GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET as string,
     }
 }
 

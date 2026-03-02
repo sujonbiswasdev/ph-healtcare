@@ -6,9 +6,12 @@ import { IndexRoutes } from "./app/routes";
 import AppError from "./app/errorHelper/AppError";
 import cookieParser from 'cookie-parser';
 import status from "http-status";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./app/lib/auth";
 
 const app: Application = express();
 
+app.use('/api/auth',toNodeHandler(auth))
 app.use(cookieParser());
 
 
