@@ -8,11 +8,22 @@ import cookieParser from 'cookie-parser';
 import status from "http-status";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./app/lib/auth";
+import path from "path";
+import cors from 'cors'
 
 const app: Application = express();
 
+app.set("view engine", "ejs");
+app.set("views",path.resolve(process.cwd(), `src/app/templates`) )
+
 app.use('/api/auth',toNodeHandler(auth))
 app.use(cookieParser());
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
+
+
 
 
 // Enable URL-encoded form data parsing

@@ -132,6 +132,10 @@ export const auth = betterAuth({
         }
     },
 
+    redirectURLs:{
+        signin:`${envVars.BETTER_AUTH_URL}`
+    },
+
     advanced: {
         // disableCSRFCheck: true,
         useSecureCookies : false,
