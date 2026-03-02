@@ -2,8 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import status from "http-status";
 // import z from "zod";
 import { envVars } from "../config/env";
-import { TErrorSources } from "../interface/error.interface";
+import { TErrorResponse, TErrorSources } from "../interface/error.interface";
 import z from "zod";
+import { handleZodError } from "../errorHelper/handleerror";
+import AppError from "../errorHelper/AppError";
 // import AppError from "../errorHelpers/AppError";
 // import { handleZodError } from "../errorHelpers/handleZodError";
 // import { TErrorResponse, TErrorSources } from "../interfaces/error.interface";
@@ -41,50 +43,34 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
     */
 
     if (err instanceof z.ZodError) {
-      statusCode=status.BAD_REQUEST,
-
-      message="Zod validation Error";
-      err.issues.forEach(issue=>{
-        errorSources.push({path:issue.path.join("=>"),message:issue.message})
-      })
-      
-        // const simplifiedError = handleZodError(err);
-        // statusCode = simplifiedError.statusCode as number
-        // message = simplifiedError.message
-        // errorSources = [...simplifiedError.errorSources]
+        const simplifiedError = handleZodError(err);
+        statusCode = simplifiedError.statusCode as number
+        message = simplifiedError.message
+        errorSources = [...simplifiedError.errorSources]
         stack = err.stack;
 
-    // } else if (err instanceof AppError) {
-    //     statusCode = err.statusCode;
-    //     message = err.message;
-    //     stack = err.stack;
-    //     errorSources = [
-    //         {
-    //             path: '',
-    //             message: err.message
-    //         }
-    //     ]
-    // }
-    // else if (err instanceof Error) {
-    //     statusCode = status.INTERNAL_SERVER_ERROR;
-    //     message = err.message
-    //     stack = err.stack;
-    //     errorSources = [
-    //         {
-    //             path: '',
-    //             message: err.message
-    //         }
-    //     ]
-    // }
+    } 
+    else if (err instanceof AppError) {
+        statusCode = err.statusCode;
+        message = err.message;
+        stack = err.stack;
+        errorSources = [
+            {
+                path: '',
+                message: err.message
+            }
+        ]
+    }
 
 
-    // const errorResponse: TErrorResponse= {
-    //     success: false,
-    //     message: message,
-    //     errorSources,
-    //     error: envVars.NODE_ENV === 'development' ? err : undefined,
-    //     stack: envVars.NODE_ENV === 'development' ? stack : undefined,
-    // }
 
-    res.status(statusCode).json("ddd");
-}}
+    const errorResponse: TErrorResponse= {
+        success: false,
+        message: message,
+        errorSources,
+        error: envVars.NODE_ENV === 'development' ? err : undefined,
+        stack: envVars.NODE_ENV === 'development' ? stack : undefined,
+    }
+
+    res.status(statusCode).json(errorResponse);
+}

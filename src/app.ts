@@ -3,6 +3,8 @@ import { prisma } from "./app/lib/prisma";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 import { notFound } from "./app/middleware/notFound";
 import { IndexRoutes } from "./app/routes";
+import AppError from "./app/errorHelper/AppError";
+import status from "http-status";
 
 const app: Application = express();
 
@@ -14,6 +16,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use("/api/v1", IndexRoutes);
+
+
+
+app.get('/test', async (req: Request, res: Response) => {
+    throw new AppError(status.BAD_REQUEST,'notfound')
+});
+
 
 // Basic route
 app.get('/', async (req: Request, res: Response) => {

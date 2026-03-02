@@ -43,5 +43,13 @@ export const auth = betterAuth({
     },
     emailAndPassword:{
         enabled:true
+    },
+    session:{
+        expiresIn:60 * 60 * 60 * 24,
+        updateAge:60 * 60 * 60 * 24,
+           cookieCache: {
+            enabled: true,
+            maxAge: 60 * 60 * 60 * 24,
+        }
     }
 });
