@@ -15,6 +15,9 @@ const app: Application = express();
 
 app.set("view engine", "ejs");
 app.set("views",path.resolve(process.cwd(), `src/app/templates`) )
+app.post("/webhook",express.raw({type:"application/json"}),async(req:Request,res:Response)=>{
+    console.log("sjdfkjsdfkjf")
+})
 
 app.use('/api/auth',toNodeHandler(auth))
 app.use(cookieParser());
