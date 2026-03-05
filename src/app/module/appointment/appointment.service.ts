@@ -7,6 +7,8 @@ import { prisma } from "../../lib/prisma";
 import { AppointmentStatus } from './../../../generated/prisma/enums';
 import { IBookAppointmentPayload } from "./appointment.interface";
 import { IRequestUser } from "../../interface/requestUser.interface";
+import { stripe } from "../../config/stripe.config";
+import AppError from "../../errorHelper/AppError";
 
 // Pay Now Book Appointment
 const bookAppointment = async (payload : IBookAppointmentPayload, user : IRequestUser) => {

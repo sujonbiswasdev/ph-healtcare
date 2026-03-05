@@ -87,7 +87,6 @@ const registerPatient = async (payload: IRegisterPatientPayload) => {
         })
         throw error;
     }
-
 }
 
 interface ILoginUserPayload {
