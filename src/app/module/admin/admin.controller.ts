@@ -3,6 +3,11 @@ import status from "http-status";
 import { catchAsync } from "../../shared/catchAsync";
 import { sendResponse } from "../../shared/sendResponse";
 import { AdminService } from "./admin.service";
+import { IRequestUser } from "../../interface/requestUser.interface";
+import { IChangeUserStatusPayload } from "./admin.interface";
+import { prisma } from "../../lib/prisma";
+import AppError from "../../errorHelper/AppError";
+import { Role, UserStatus } from "../../../generated/prisma/enums";
 
 const getAllAdmins = catchAsync(
     async (req: Request, res: Response) => {
@@ -63,11 +68,47 @@ const deleteAdmin = catchAsync(
         })
     }
 
+
+
+    
 )
+
+const changeUserRole = catchAsync(
+    async (req: Request, res: Response) => {
+        const user = req.user;
+        const payload = req.body;
+        const result = await AdminService.changeUserRole(user, payload);
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "User role changed successfully",
+            data: result,
+        })
+    }
+);
+
+const changeUserStatus = catchAsync(
+    async (req: Request, res: Response) => {
+        const user = req.user;
+        const payload = req.body;
+        const result = await AdminService.changeUserStatus(user, payload);
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "User status changed successfully",
+            data: result,
+        })
+    }
+);
+
+
+
 
 export const AdminController = {
     getAllAdmins,
     updateAdmin,
     deleteAdmin,
     getAdminById,
+    changeUserStatus,
+    changeUserRole
 };
