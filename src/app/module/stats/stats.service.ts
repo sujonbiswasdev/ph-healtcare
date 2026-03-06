@@ -235,7 +235,15 @@ const getBarChartData = async () => {
         ORDER BY month ASC;
     `
 
-    return appointmentCountByMonth
+        const appointmentCountByYears : AppointmentCountByMonth[] = await prisma.$queryRaw`
+        SELECT DATE_TRUNC('year', "createdAt") AS year,
+        CAST(COUNT(*) AS INTEGER) AS count
+        FROM "appointments"
+        GROUP BY year
+        ORDER BY year ASC;
+    `
+
+    return {appointmentCountByMonth,appointmentCountByYears}
 }
 
 
