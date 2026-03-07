@@ -37,7 +37,6 @@ TInclude = Record<string, unknown>
 
     search() : this {
         const {searchTerm} = this.queryParams;
-        console.log(searchTerm,'searchterm')
         const { searchableFields} = this.config;
         // doctorSearchableFields = ['user.name', 'user.email', 'specialties.specialty.title' , 'specialties.specialty.description']
         if(searchTerm && searchableFields && searchableFields.length > 0){
@@ -83,7 +82,6 @@ TInclude = Record<string, unknown>
                     contains: searchTerm,
                     mode: 'insensitive' as const,
                 }
-
                 return {
                     [field]: stringFilter
                 }

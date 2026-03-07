@@ -6,7 +6,7 @@ import { Prisma } from "../../generated/prisma/client";
 import { envVars } from "../config/env";
 import { deleteUploadedFilesFromGlobalErrorHandler } from "../utils/deleteUploadedFileFormglobalError";
 import { TErrorResponse, TErrorSources } from "../interface/error.interface";
-import { handlePrismaClientKnownRequestError, handlePrismaClientUnknownError, handlePrismaClientValidationError, handlerPrismaClientInitializationError, handlerPrismaClientRustPanicError } from "../errorHelper/handlePrismaError";
+import { handlePrismaClientInitializationError, handlePrismaClientKnownRequestError, handlePrismaClientUnknownError, handlePrismaClientValidationError, handlerPrismaClientRustPanicError } from "../errorHelper/handlePrismaError";
 import { handleZodError } from "../errorHelper/handleerror";
 import AppError from "../errorHelper/AppError";
 
@@ -74,7 +74,7 @@ export const globalErrorHandler = async (err: any, req: Request, res: Response, 
         errorSources = [...simplifiedError.errorSources]
         stack = err.stack;
     } else if(err instanceof Prisma.PrismaClientInitializationError){
-        const simplifiedError = handlerPrismaClientInitializationError(err);
+        const simplifiedError = handlePrismaClientInitializationError(err);
         statusCode = simplifiedError.statusCode as number
         message = simplifiedError.message
         errorSources = [...simplifiedError.errorSources]

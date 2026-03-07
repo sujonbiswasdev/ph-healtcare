@@ -15,8 +15,11 @@ const app: Application = express();
 
 app.set("view engine", "ejs");
 app.set("views",path.resolve(process.cwd(), `src/app/templates`) )
-app.post("/webhook",express.raw({type:"application/json"}),async(req:Request,res:Response)=>{
-})
+app.post("/webhook", express.raw({ type: "application/json" }), async (req: Request, res: Response) => {
+  // TODO: Implement webhook processing logic
+  // Example: Verify webhook signature, process payload
+  res.status(200).json({ received: true });
+});
 
 app.use('/api/auth',toNodeHandler(auth))
 app.use(cookieParser());
