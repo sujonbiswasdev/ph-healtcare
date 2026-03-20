@@ -89,7 +89,7 @@ const registerPatient = async (payload: IRegisterPatientPayload) => {
     }
 }
 
-interface ILoginUserPayload {
+interface ILoginUserPayload{
     email: string;
     password: string;
 }
@@ -131,13 +131,11 @@ const loginUser = async (payload: ILoginUserPayload) => {
         isDeleted: data.user.isDeleted,
         emailVerified: data.user.emailVerified,
     });
-
     return {
         ...data,
         accessToken,
         refreshToken,
     };
-
 }
 
 

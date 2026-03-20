@@ -50,8 +50,8 @@ const loadEnvVariables = (): EnvConfig => {
         // 'BETTER_AUTH_URL',
         'ACCESS_TOKEN_SECRET',
         'REFRESH_TOKEN_SECRET',
-        // 'ACCESS_TOKEN_EXPIRES_IN',
-        // 'REFRESH_TOKEN_EXPIRES_IN',
+        'ACCESS_TOKEN_EXPIRES_IN',
+        'REFRESH_TOKEN_EXPIRES_IN',
         // 'BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN',
         // 'BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE'
         'EMAIL_SENDER_SMTP_USER',

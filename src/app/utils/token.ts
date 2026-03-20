@@ -10,7 +10,7 @@ const getAccessToken = (payload: JwtPayload) => {
     const accessToken = jwtUtils.createToken(
         payload,
         envVars.ACCESS_TOKEN_SECRET!,
-        { expiresIn: 60 * 60 * 60 * 24 } as SignOptions
+        { expiresIn:  envVars.ACCESS_TOKEN_EXPIRES_IN} as SignOptions
     );
 
     return accessToken;

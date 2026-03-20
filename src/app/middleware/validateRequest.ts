@@ -13,7 +13,6 @@ export const validateRequest = (zodSchema: z.ZodObject) => {
 
         //sanitizing the data
         req.body = parsedResult.data;
-
         next();
     }
 }

@@ -18,7 +18,7 @@ const registerPatient = catchAsync(
         const result = await AuthService.registerPatient(payload);
 
          const { accessToken, refreshToken, token, ...rest } = result
-           tokenUtils.setAccessTokenCookie(res, accessToken);
+        tokenUtils.setAccessTokenCookie(res, accessToken);
         tokenUtils.setRefreshTokenCookie(res, refreshToken);
         tokenUtils.setBetterAuthSessionCookie(res, token as string);
 
@@ -36,7 +36,7 @@ const loginUser = catchAsync(
         const payload = req.body;
         const result = await AuthService.loginUser(payload);
         
-        const { accessToken, refreshToken, token, ...rest } = result
+        const { accessToken, refreshToken, token } = result
            tokenUtils.setAccessTokenCookie(res, accessToken);
         tokenUtils.setRefreshTokenCookie(res, refreshToken);
         tokenUtils.setBetterAuthSessionCookie(res, token as string);
