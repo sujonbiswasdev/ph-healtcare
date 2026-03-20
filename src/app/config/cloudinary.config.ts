@@ -1,28 +1,21 @@
-import { v2 as cloudinary, UploadApiResponse } from "cloudinary";
-import { envVars } from "./env";
-import AppError from "../errorHelper/AppError";
-import status from "http-status";
-
-
+import { v2 as cloudinary } from "cloudinary";
+import AppError from "../errorhelper/AppError";
 cloudinary.config({
-    cloud_name: envVars.CLOUDINARY.CLOUDINARY_CLOUD_NAME,
-    api_key: envVars.CLOUDINARY.CLOUDINARY_API_KEY,
-    api_secret: envVars.CLOUDINARY.CLOUDINARY_API_SECRET,
-})
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME as string,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-
-export const uploadFileToCloudinary = async (
-    buffer : Buffer,
-    fileName: string,
-) : Promise<UploadApiResponse> =>{
-
-    if(!buffer || !fileName) {
-        throw new AppError(status.BAD_REQUEST, "File buffer and file name are required for upload");
-    }
-
-    const extension = fileName.split(".").pop()?.toLocaleLowerCase();
-
-    const fileNameWithoutExtension = fileName
+export const uploadFileToCloudinary = (buffer: Buffer, fileName: string) => {
+  if (!buffer || !fileName) {
+    throw new AppError(
+      400,
+      "File buffer and file name are required for upload",
+    );
+    
+  }
+  const extension = fileName.split(".").pop()?.toLocaleLowerCase();
+  const fileNameWithoutExtension = fileName
         .split(".")
         .slice(0, -1)
         .join(".")
@@ -31,17 +24,15 @@ export const uploadFileToCloudinary = async (
         // eslint-disable-next-line no-useless-escape
         .replace(/[^a-z0-9\-]/g, "");
 
-    const uniqueName =
+          const uniqueName =
         Math.random().toString(36).substring(2) +
         "-" +
         Date.now() +
         "-" +
         fileNameWithoutExtension;
+         const folder = extension === "pdf" ? "pdfs" : "images";
 
-    const folder = extension === "pdf" ? "pdfs" : "images";
-
-
-    return new Promise((resolve, reject) => {
+           return new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
             {
                 resource_type: "auto",
@@ -50,16 +41,13 @@ export const uploadFileToCloudinary = async (
             },
             (error, result) => {
                 if(error){
-                    return reject(new AppError(status.INTERNAL_SERVER_ERROR, "Failed to upload file to Cloudinary"));
+                    return reject(new AppError(500, "Failed to upload file to Cloudinary"));
                 }
-                resolve(result as UploadApiResponse);
+                resolve(result);
             }
         ).end(buffer);
     })
-
-
-}
-
+};
 
 export const deleteFileFromCloudinary = async (url : string) => {
 
@@ -82,7 +70,7 @@ export const deleteFileFromCloudinary = async (url : string) => {
 
     } catch (error) {
         console.error("Error deleting file from Cloudinary:", error);
-        throw new AppError(status.INTERNAL_SERVER_ERROR,"Failed to delete file from Cloudinary");
+        throw new AppError(400,"Failed to delete file from Cloudinary");
     }
 }
-export const cloudinaryUpload=cloudinary
+export const cloudinaryUpload = cloudinary;

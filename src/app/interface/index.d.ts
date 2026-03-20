@@ -1,10 +1,10 @@
-import { IRequestUser } from "./requestUser.interface";
-
-
-declare global {
+import { Request } from 'express';
+import { IRequestUser } from './request.user';
+declare global{
     namespace Express{
-        interface Request {
-            user : IRequestUser
+        interface Request{
+            user:IRequestUser
         }
     }
+
 }

@@ -1,23 +1,18 @@
 import { Router } from "express";
-import { AuthController } from "./auth.controller";
+import { authController } from "./auth.controller";
+import { auth } from "../../middleware/checkauth";
 import { Role } from "../../../generated/prisma/enums";
-import { checkAuth } from "../../middleware/checkAuth";
 
-const router = Router()
+const router=Router()
+router.get("/register",authController.Createuser)
+router.get("/login",authController.Createuser)
+router.get("/me",authController.Createuser)
+router.post("/refresh-token", authController.getNewToken)
+router.post("/change-password", auth(Role.ADMIN, Role.DOCTOR, Role.PATIENT, Role.SUPER_ADMIN), authController.changePassword)
+router.post("/logout", auth(Role.ADMIN, Role.DOCTOR, Role.PATIENT, Role.SUPER_ADMIN), authController.logoutUser)
 
-router.post("/register", AuthController.registerPatient)
-router.post("/login", AuthController.loginUser)
-router.get("/me", checkAuth(Role.ADMIN, Role.DOCTOR, Role.PATIENT, Role.SUPER_ADMIN), AuthController.getMe)
-router.post("/refresh-token", AuthController.getNewToken)
-router.post("/change-password", checkAuth(Role.ADMIN, Role.DOCTOR, Role.PATIENT, Role.SUPER_ADMIN), AuthController.changePassword)
-router.post("/logout", checkAuth(Role.ADMIN, Role.DOCTOR, Role.PATIENT, Role.SUPER_ADMIN), AuthController.logoutUser)
-router.post("/verify-email", AuthController.verifyEmail)
-router.post("/forget-password", AuthController.forgetPassword)
-router.post("/reset-password", AuthController.resetPassword)
+router.post("/verify-email", authController.verifyEmail)
+router.post("/forget-password", authController.forgetPassword)
+router.post("/reset-password", authController.resetPassword)
 
-
-router.get("/login/google", AuthController.googleLogin);
-router.get("/google/success", AuthController.googleLoginSuccess);
-router.get("/oauth/error", AuthController.handleOAuthError);
-
-export const AuthRoutes = router;
+export const authRouters={router}

@@ -1,14 +1,13 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
-import { Role, UserStatus } from "../../generated/prisma/enums";
 import { bearer, emailOTP, jwt } from "better-auth/plugins";
 import { sendEmail } from "../utils/email";
-import { envVars } from "../config/env";
+
 
 export const auth = betterAuth({
-    baseURL: envVars.BETTER_AUTH_URL,
-    secret: envVars.BETTER_AUTH_SECRET,
+    baseURL: process.env.BETTER_AUTH_URL,
+    secret: process.env.BETTER_AUTH_SECRET,
     database: prismaAdapter(prisma, {
         provider: "postgresql"
     }),
@@ -18,13 +17,13 @@ export const auth = betterAuth({
             role: {
                 type: "string",
                 required: true,
-                defaultValue: Role.PATIENT
+                defaultValue:"PATIENT"
             },
 
             status: {
                 type: "string",
                 required: true,
-                defaultValue: UserStatus.ACTIVE
+                defaultValue:"ACTIVE"
             },
 
             needPasswordChange: {
@@ -59,16 +58,15 @@ export const auth = betterAuth({
      plugins: [
         bearer(),
         emailOTP({
-            overrideDefaultEmailVerification: true,
-            async sendVerificationOTP({email, otp, type}) {
-                if(type === "email-verification"){
-                  const user = await prisma.user.findUnique({
+            overrideDefaultEmailVerification:true,
+            async sendVerificationOTP({email,otp,type}){
+                if(type==='email-verification'){
+                     const user = await prisma.user.findUnique({
                     where : {
                         email,
                     }
                   })
-                  
-                  if(user && !user.emailVerified){
+                    if(user && !user.emailVerified){
                     sendEmail({
                         to : email,
                         subject : "Verify your email",
@@ -99,63 +97,8 @@ export const auth = betterAuth({
                     }
                 }
             },
-            expiresIn : 2 * 60, // 2 minutes in seconds
+             expiresIn : 2 * 60, // 2 minutes in seconds
             otpLength : 6,
         })
     ],
-
-      socialProviders:{
-        google:{
-            clientId: envVars.GOOGLE_CLIENT_ID,
-            clientSecret: envVars.GOOGLE_CLIENT_SECRET,
-            // callbackUrl: envVars.GOOGLE_CALLBACK_URL,
-            mapProfileToUser: ()=>{
-                return {
-                    role : Role.PATIENT,
-                    status : UserStatus.ACTIVE,
-                    needPasswordChange : false,
-                    emailVerified : true,
-                    isDeleted : false,
-                    deletedAt : null,
-                }
-            }
-        }
-    },
-
-
-    session: {
-        expiresIn: 60 * 60 * 60 * 24,
-        updateAge: 60 * 60 * 60 * 24,
-        cookieCache: {
-            enabled: true,
-            maxAge: 60 * 60 * 60 * 24,
-        }
-    },
-
-    redirectURLs:{
-        signin:`${envVars.BETTER_AUTH_URL}`
-    },
-
-    advanced: {
-        // disableCSRFCheck: true,
-        useSecureCookies : false,
-        cookies:{
-            state:{
-                attributes:{
-                    sameSite: "none",
-                    secure: true,
-                    httpOnly: true,
-                    path: "/",
-                }
-            },
-            sessionToken:{
-                attributes:{
-                    sameSite: "none",
-                    secure: true,
-                    httpOnly: true,
-                    path: "/",
-                }
-            }
-        }
-    }
 });
