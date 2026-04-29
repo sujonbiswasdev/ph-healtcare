@@ -16,24 +16,30 @@ export class RagService {
     async ingestDoctorData() {
         return await this.indexService.indexDoctorData();
     }
-    async retieveRelevantDocuments(query: string,
+      async retieveRelevantDocuments(
+        query: string,
         limit: number = 5,
-        sourceType?: string
+        sourceType?: string,
     ) {
         try {
-            const queryEmbedding = await this.embeddingService.generateEmbedding(query)
-            const vectorLiteral = `[${queryEmbedding.join(",")}]`;
-            const results = await prisma.$executeRaw(Prisma.sql`
-            SELECT id, "chunkKey", "sourceType", "sourceId", "sourceLabel", content, metadata, embedding, "isDeleted", "deletedAt", "createdAt", "updatedAt",1-(embedding<=>CAST(${vectorLiteral} AS vector)) AS similarity FROM "document_embeddings"  WHERE "isDeleted" = false 
-             ${sourceType ? Prisma.sql`AND "sourceType" = ${sourceType}` : Prisma.empty}
-             ORDER BY embedding <=> CAST(${vectorLiteral} AS vector)
-          Limit ${limit}
-                `)
-            return results
-        } catch (error) {
-            console.log(error, 'retrievedreleventdocument error')
-            throw error
+            const queryEmbedding =
+                await this.embeddingService.generateEmbedding(query);
 
+            const vectorLiteral = `[${queryEmbedding.join(",")}]`;
+
+            const results = await prisma.$queryRaw(Prisma.sql`
+          SELECT id, "chunkKey", "sourceType", "sourceId", "sourceLabel", content, metadata, embedding, "isDeleted", "deletedAt", "createdAt", "updatedAt", 1 - (embedding <=> CAST(${vectorLiteral} AS vector)) as similarity
+          FROM "document_embeddings"
+          WHERE "isDeleted" = false
+          ${sourceType ? Prisma.sql`AND "sourceType" = ${sourceType}` : Prisma.empty}
+          ORDER BY embedding <=> CAST(${vectorLiteral} AS vector)
+          Limit ${limit}
+          `);
+
+            return results;
+        } catch (error) {
+            console.log(error);
+            throw error;
         }
     }
     async queryAnswer(query: string, limit: number, sourceType: string, asJson: boolean = false,) {
@@ -42,6 +48,7 @@ export class RagService {
             limit,
             sourceType,
         );
+        console.log(relevantDocs,'dsfsdfsafd')
         // extract content from documents for context
         const context = (relevantDocs as any)
             .filter((doc: any) => doc.content)
