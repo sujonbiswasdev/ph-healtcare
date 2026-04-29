@@ -1,12 +1,94 @@
+import { Prisma } from "../../../generated/prisma/client";
+import { prisma } from "../../lib/prisma";
+import { EmbeddingService } from "./embedding.service";
 import { IndexingService } from "./indexing.service";
+import { LLMService } from "./llm.service";
 
-export class RagService{
-    private indexService:IndexingService;
-    constructor(){
-        this.indexService=new IndexingService();
+export class RagService {
+    private indexService: IndexingService;
+    private llmService: LLMService;
+    private embeddingService: EmbeddingService;
+    constructor() {
+        this.indexService = new IndexingService();
+        this.llmService = new LLMService();
+        this.embeddingService = new EmbeddingService()
     }
-    async ingestDoctorData(){
-       return await this.indexService.indexDoctorData();
+    async ingestDoctorData() {
+        return await this.indexService.indexDoctorData();
     }
+    async retieveRelevantDocuments(query: string,
+        limit: number = 5,
+        sourceType?: string
+    ) {
+        try {
+            const queryEmbedding = await this.embeddingService.generateEmbedding(query)
+            const vectorLiteral = `[${queryEmbedding.join(",")}]`;
+            const results = await prisma.$executeRaw(Prisma.sql`
+            SELECT id, "chunkKey", "sourceType", "sourceId", "sourceLabel", content, metadata, embedding, "isDeleted", "deletedAt", "createdAt", "updatedAt",1-(embedding<=>CAST(${vectorLiteral} AS vector)) AS similarity FROM "document_embeddings"  WHERE "isDeleted" = false 
+             ${sourceType ? Prisma.sql`AND "sourceType" = ${sourceType}` : Prisma.empty}
+             ORDER BY embedding <=> CAST(${vectorLiteral} AS vector)
+          Limit ${limit}
+                `)
+            return results
+        } catch (error) {
+            console.log(error, 'retrievedreleventdocument error')
+            throw error
+
+        }
+    }
+    async queryAnswer(query: string, limit: number, sourceType: string, asJson: boolean = false,) {
+        const relevantDocs = await this.retieveRelevantDocuments(
+            query,
+            limit,
+            sourceType,
+        );
+        // extract content from documents for context
+        const context = (relevantDocs as any)
+            .filter((doc: any) => doc.content)
+            .map((doc: any) => doc.content);
+
+        let answer = await this.llmService.generateResponse(
+            query,
+            context,
+            asJson,
+        );
+        let parsedAnswer: any = answer;
+        if (asJson) {
+            try {
+                // If the model wrapped the JSON in markdown blocks, clean it up
+                if (answer.startsWith("```json")) {
+                    answer = answer
+                        .replace(/```json\n?/, "")
+                        .replace(/```$/, "")
+                        .trim();
+                } else if (answer.startsWith("```")) {
+                    answer = answer
+                        .replace(/```\n?/, "")
+                        .replace(/```$/, "")
+                        .trim();
+                }
+                parsedAnswer = JSON.parse(answer);
+            } catch (e) {
+                console.error("Failed to parse LLM JSON response:", e);
+                throw e;
+            }
+        }
+
+        return {
+            answer: parsedAnswer,
+            sources: (relevantDocs as any).map((doc: any) => ({
+                id: doc.id,
+                chunkKey: doc.chunkKey,
+                sourceType: doc.sourceType,
+                sourceId: doc.sourceId,
+                sourceLabel: doc.sourceLabel,
+                content: doc.content,
+                similarity: doc.similarity,
+            })),
+            contextUsed: context.length > 0,
+        };
+
+    }
+
 
 }
