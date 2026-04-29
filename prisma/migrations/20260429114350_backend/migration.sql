@@ -1,3 +1,6 @@
+-- CreateExtension
+CREATE EXTENSION IF NOT EXISTS "vector";
+
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('SUPER_ADMIN', 'ADMIN', 'DOCTOR', 'PATIENT');
 
@@ -220,6 +223,24 @@ CREATE TABLE "prescriptions" (
 );
 
 -- CreateTable
+CREATE TABLE "document_embeddings" (
+    "id" TEXT NOT NULL,
+    "chunkKey" TEXT NOT NULL,
+    "sourceType" TEXT NOT NULL,
+    "sourceId" TEXT NOT NULL,
+    "sourceLabel" TEXT,
+    "content" TEXT NOT NULL,
+    "metadata" JSONB,
+    "embedding" vector(2048) NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
+    "deletedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "document_embeddings_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "reviews" (
     "id" TEXT NOT NULL,
     "rating" DOUBLE PRECISION NOT NULL DEFAULT 0.0,
@@ -382,6 +403,15 @@ CREATE INDEX "prescriptions_patientId_idx" ON "prescriptions"("patientId");
 
 -- CreateIndex
 CREATE INDEX "prescriptions_doctorId_idx" ON "prescriptions"("doctorId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "document_embeddings_chunkKey_key" ON "document_embeddings"("chunkKey");
+
+-- CreateIndex
+CREATE INDEX "idx_document_embeddings_sourceType" ON "document_embeddings"("sourceType");
+
+-- CreateIndex
+CREATE INDEX "idx_document_embeddings_sourceId" ON "document_embeddings"("sourceId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "reviews_appointmentId_key" ON "reviews"("appointmentId");

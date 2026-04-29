@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.4.2
- * Query Engine version: 94a226be1cf2967af2541cca5529f0f7ba866919
+ * Prisma Client JS version: 7.8.0
+ * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.4.2",
-  engine: "94a226be1cf2967af2541cca5529f0f7ba866919"
+  client: "7.8.0",
+  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
 }
 
 /**
@@ -396,6 +396,7 @@ export const ModelName = {
   PatientHealthData: 'PatientHealthData',
   Payment: 'Payment',
   Prescription: 'Prescription',
+  DocumentEmbedding: 'DocumentEmbedding',
   Review: 'Review',
   Schedule: 'Schedule',
   DoctorSchedules: 'DoctorSchedules',
@@ -416,7 +417,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "admin" | "appointment" | "user" | "session" | "account" | "verification" | "doctor" | "medicalReport" | "patient" | "patientHealthData" | "payment" | "prescription" | "review" | "schedule" | "doctorSchedules" | "specialty" | "doctorSpecialty"
+    modelProps: "admin" | "appointment" | "user" | "session" | "account" | "verification" | "doctor" | "medicalReport" | "patient" | "patientHealthData" | "payment" | "prescription" | "documentEmbedding" | "review" | "schedule" | "doctorSchedules" | "specialty" | "doctorSpecialty"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1308,6 +1309,64 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    DocumentEmbedding: {
+      payload: Prisma.$DocumentEmbeddingPayload<ExtArgs>
+      fields: Prisma.DocumentEmbeddingFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DocumentEmbeddingFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentEmbeddingPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DocumentEmbeddingFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentEmbeddingPayload>
+        }
+        findFirst: {
+          args: Prisma.DocumentEmbeddingFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentEmbeddingPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DocumentEmbeddingFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentEmbeddingPayload>
+        }
+        findMany: {
+          args: Prisma.DocumentEmbeddingFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentEmbeddingPayload>[]
+        }
+        delete: {
+          args: Prisma.DocumentEmbeddingDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentEmbeddingPayload>
+        }
+        update: {
+          args: Prisma.DocumentEmbeddingUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentEmbeddingPayload>
+        }
+        deleteMany: {
+          args: Prisma.DocumentEmbeddingDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DocumentEmbeddingUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DocumentEmbeddingUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentEmbeddingPayload>[]
+        }
+        aggregate: {
+          args: Prisma.DocumentEmbeddingAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDocumentEmbedding>
+        }
+        groupBy: {
+          args: Prisma.DocumentEmbeddingGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DocumentEmbeddingGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DocumentEmbeddingCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DocumentEmbeddingCountAggregateOutputType> | number
+        }
+      }
+    }
     Review: {
       payload: Prisma.$ReviewPayload<ExtArgs>
       fields: Prisma.ReviewFieldRefs
@@ -1920,6 +1979,23 @@ export const PrescriptionScalarFieldEnum = {
 export type PrescriptionScalarFieldEnum = (typeof PrescriptionScalarFieldEnum)[keyof typeof PrescriptionScalarFieldEnum]
 
 
+export const DocumentEmbeddingScalarFieldEnum = {
+  id: 'id',
+  chunkKey: 'chunkKey',
+  sourceType: 'sourceType',
+  sourceId: 'sourceId',
+  sourceLabel: 'sourceLabel',
+  content: 'content',
+  metadata: 'metadata',
+  isDeleted: 'isDeleted',
+  deletedAt: 'deletedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DocumentEmbeddingScalarFieldEnum = (typeof DocumentEmbeddingScalarFieldEnum)[keyof typeof DocumentEmbeddingScalarFieldEnum]
+
+
 export const ReviewScalarFieldEnum = {
   id: 'id',
   rating: 'rating',
@@ -2279,6 +2355,21 @@ export type PrismaClientOptions = ({
    * ```
    */
   comments?: runtime.SqlCommenterPlugin[]
+  /**
+   * Optional maximum size for the query plan cache. If not provided, a default size will be used.
+   * A value of `0` can be used to disable the cache entirely. A higher cache size can improve
+   * performance for applications that execute a large number of unique queries, while a smaller
+   * cache size can reduce memory usage.
+   * 
+   * @example
+   * ```
+   * const prisma = new PrismaClient({
+   *   adapter,
+   *   queryPlanCacheMaxSize: 100,
+   * })
+   * ```
+   */
+  queryPlanCacheMaxSize?: number
 }
 export type GlobalOmitConfig = {
   admin?: Prisma.AdminOmit
@@ -2293,6 +2384,7 @@ export type GlobalOmitConfig = {
   patientHealthData?: Prisma.PatientHealthDataOmit
   payment?: Prisma.PaymentOmit
   prescription?: Prisma.PrescriptionOmit
+  documentEmbedding?: Prisma.DocumentEmbeddingOmit
   review?: Prisma.ReviewOmit
   schedule?: Prisma.ScheduleOmit
   doctorSchedules?: Prisma.DoctorSchedulesOmit

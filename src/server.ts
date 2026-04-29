@@ -6,7 +6,7 @@ let server:Server
 const port = 5000
 const bootstrap = async() => {
     try {
-        await seedSuperAdmin();
+        // await seedSuperAdmin();
         server = app.listen(envVars.PORT, () => {
             console.log(`Server is running on http://localhost:${envVars.PORT}`);
         });

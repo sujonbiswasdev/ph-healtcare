@@ -158,7 +158,7 @@ export type DoctorSchedulesGroupByOutputType = {
   _max: DoctorSchedulesMaxAggregateOutputType | null
 }
 
-type GetDoctorSchedulesGroupByPayload<T extends DoctorSchedulesGroupByArgs> = Prisma.PrismaPromise<
+export type GetDoctorSchedulesGroupByPayload<T extends DoctorSchedulesGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<DoctorSchedulesGroupByOutputType, T['by']> &
       {
@@ -1248,6 +1248,11 @@ export type DoctorSchedulesFindManyArgs<ExtArgs extends runtime.Types.Extensions
    * Skip the first `n` DoctorSchedules.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of DoctorSchedules.
+   */
   distinct?: Prisma.DoctorSchedulesScalarFieldEnum | Prisma.DoctorSchedulesScalarFieldEnum[]
 }
 
