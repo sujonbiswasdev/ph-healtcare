@@ -24,7 +24,7 @@ const queryRag = catchAsync(async (req: Request, res: Response) => {
             message: "Query is required",
         });
     }
-    const result = await ragService.queryAnswer(query, limit ?? 5, sourceType);
+    const result = await ragService.queryAnswer(query, limit ?? 5, sourceType,true);
     sendResponse(res, {
         success: true,
         message: '',
@@ -33,8 +33,20 @@ const queryRag = catchAsync(async (req: Request, res: Response) => {
     })
 })
 
+const getStats = catchAsync(async (req: Request, res: Response) => {
+  const result = await ragService.getStats();
+
+  sendResponse(res, {
+    success: true,
+    httpStatusCode: status.OK,
+    message: "RAG stats retrieved successfully",
+    data: result,
+  });
+});
+
 
 export const RagController = {
     queryRag,
-    ingestDoctor
+    ingestDoctor,
+    getStats
 }
